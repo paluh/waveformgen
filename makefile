@@ -1,6 +1,6 @@
 .PHONY: macports, clean
 
-waveformgen:
+waveformgen: main.c waveformgen.c
 	gcc  -Wall -O3 -std=c99 -o waveformgen -lm -lsndfile -lgd -lpng waveformgen.c main.c
 
 macports:

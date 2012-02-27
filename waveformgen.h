@@ -38,6 +38,7 @@ struct wfg_options {
 	
 	bool mixChannels;
 	int channelSpacing;
+	int trackLength;
 	
 	bool drawTimeline;
 	int tlColor[3];

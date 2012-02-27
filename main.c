@@ -52,7 +52,7 @@ int main (int argc, char *argv[])
 	int c;
 	int spacing;
 	
-	while((c = getopt(argc, argv, "o:i:d:htms:a:leb:r:p:c:x:g:v")) != -1)
+	while((c = getopt(argc, argv, "o:i:d:htms:a:leb:r:p:c:x:g:vL:")) != -1)
 	{
 		switch (c)
 		{
@@ -70,7 +70,8 @@ int main (int argc, char *argv[])
 			case 'i': // input
 				inFile = optarg;
 				break;
-			
+			case 'L':
+				options->trackLength = atoi(optarg);
 			case 't': // transparent
 				options->transparentBg = true;
 				break;
@@ -122,20 +123,24 @@ break;\
 				
 		}
 	}
-	
-	if(argc > optind)
+	if(argc > optind+1)
 	{
 		inFile = argv[optind];
 	}
 	
-	if(argc > optind+1)
+	if(argc > optind)
 	{
-		outFile = argv[optind+1];
+		if(inFile)
+		{
+			outFile = argv[optind+1];
+		} else {
+			outFile = argv[optind];
+		}
 	}
 	
-	if(inFile == NULL)
+	if(inFile == NULL && options->trackLength == -1)
 	{
-		fprintf(stderr, "You have to specify an input file!\n");
+		fprintf(stderr, "You have to specify stream length!\n");
 		return EXIT_FAILURE;
 	}
 	

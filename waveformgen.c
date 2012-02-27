@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -48,13 +49,20 @@ bool wfg_generateImage(char* audioFileName, char* pictureFileName, WFGO* options
 {	
 	int width = options->width;
 	int height = options->height;
+	int seconds;
+	long framesPerLine;
 
 	// Initial audio part
 	
 	SF_INFO sfinfo;
 	memset(&sfinfo, 0, sizeof(sfinfo));
 	
-	SNDFILE* sfile =  sf_open(audioFileName, SFM_READ, &sfinfo);
+	SNDFILE *sfile;
+	if(audioFileName != NULL) {
+		sfile =  sf_open(audioFileName, SFM_READ, &sfinfo);
+	} else {
+		sfile = sf_open_fd(STDIN_FILENO, SFM_READ, &sfinfo, 0);
+	}
 	
 	if(sfile == NULL)
 	{
@@ -62,11 +70,14 @@ bool wfg_generateImage(char* audioFileName, char* pictureFileName, WFGO* options
 		return false;
 	}
 	
-	long framesPerLine = (long) sfinfo.frames / width;
+	if(audioFileName == NULL) {
+		seconds = options->trackLength;
+		framesPerLine = ((long) seconds * sfinfo.samplerate) / width;
+	} else {
+		seconds = sfinfo.frames / sfinfo.samplerate;
+		framesPerLine = (long) sfinfo.frames / width;
+	}
 	long samplesPerLine = framesPerLine * sfinfo.channels;
-	
-	int seconds = sfinfo.frames / sfinfo.samplerate;
-	
 	
 	// although one could think, that these values are flexible, the loops
 	// below only work in these configurations (1/all or all/1)
@@ -304,6 +315,7 @@ WFGO* wfg_defaultOptions()
 	options->markSpacing = 80;
 	
 	options->drawMarkEveryMinute = false;
+	options->trackLength = -1;
 
 	return options;
 }
