@@ -144,12 +144,6 @@ break;\
 		return EXIT_FAILURE;
 	}
 	
-	if(outFile == NULL)
-	{
-		fprintf(stderr, "You have to specify an output file!\n");
-		return EXIT_FAILURE;
-	}
-	
 	// a too small width would make the audio file buffer quite large.
 	if(options->width < 10)
 	{

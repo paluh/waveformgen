@@ -200,7 +200,12 @@ bool wfg_generateImage(char* audioFileName, char* pictureFileName, WFGO* options
 		drawTimeline(im, options, seconds);
 	
 	// write out file
-	FILE* file = fopen(pictureFileName,"wb");
+	FILE* file;
+	if(pictureFileName) {
+		file = fopen(pictureFileName,"wb");
+	} else {
+		file = stdout;
+	}
 	if(file == NULL)
 	{
 		lastErrorMessage = "Could not open output file!";
