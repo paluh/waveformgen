@@ -141,11 +141,15 @@ bool wfg_generateImage(char* audioFileName, char* pictureFileName, WFGO* options
 	{
 		if(sf_read_float(sfile, buffer, samplesPerLine) != samplesPerLine)
 		{
-			lastErrorMessage = "Could not read samples from audio file!";
-			sf_close(sfile);
-			free(buffer);
-			gdImageDestroy(im);
-			return false;			
+			if(audioFileName == NULL) {
+				memset(buffer, 0, samplesPerLine);
+			} else {
+				lastErrorMessage = "Could not read samples from audio file!";
+				sf_close(sfile);
+				free(buffer);
+				gdImageDestroy(im);
+				return false;
+			}
 		}
 		
 		int drawOffset = 0;
